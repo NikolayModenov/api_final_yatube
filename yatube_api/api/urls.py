@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
@@ -15,15 +13,9 @@ router_v1.register(r'posts/(?P<post_id>\d+)/comments?',
 
 urlpatterns_v1 = [
     path('', include(router_v1.urls)),
-    path('', include('djoser.urls')),
     path('', include('djoser.urls.jwt')),
 ]
 
 urlpatterns = [
     path('v1/', include(urlpatterns_v1)),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(
-        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-    )
