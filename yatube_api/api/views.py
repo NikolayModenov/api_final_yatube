@@ -3,9 +3,11 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated, IsAuthenticatedOrReadOnly
+)
 
-from api.permissions import IsAuthor
+from api.permissions import IsAuthorOrReadOnly
 from api.serializers import (
     CommentSerializer, PostSerializer, GroupSerializer, FollowSerializer
 )
@@ -15,7 +17,7 @@ from posts.models import Post, Group
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (IsAuthor,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
@@ -28,7 +30,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthor,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     serializer_class = CommentSerializer
 
     def get_post(self):
@@ -47,7 +49,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class FollowViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                     viewsets.GenericViewSet):
     serializer_class = FollowSerializer
-    permission_classes = (IsAuthenticated, IsAuthor)
+    permission_classes = (IsAuthenticated, IsAuthorOrReadOnly)
     filter_backends = (SearchFilter,)
     search_fields = ('=user__username', '=following__username')
 

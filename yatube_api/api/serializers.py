@@ -51,7 +51,7 @@ class FollowSerializer(serializers.ModelSerializer):
             )
         ]
 
-    def validate_following(self, author):
-        if author == self.context['request'].user:
+    def validate_following(self, following):
+        if following == self.context['request'].user:
             raise ValidationError('You cant subscribe to yourself.')
-        return author
+        return following
